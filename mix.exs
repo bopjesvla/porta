@@ -28,6 +28,6 @@ defmodule Porta.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    []
+    [{:ecto, "~> 2.1.3", only: :test}]
   end
 end
