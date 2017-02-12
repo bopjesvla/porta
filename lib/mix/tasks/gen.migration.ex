@@ -1,7 +1,7 @@
 defmodule Mix.Tasks.Porta.Gen.Migration do
   use Mix.Task
 
-  import Macro, only: [camelize: 1, underscore: 1]
+  import Macro, only: [underscore: 1]
   import Mix.Generator
 
   @shortdoc "Generates a new migration for the repo"
@@ -26,24 +26,24 @@ defmodule Mix.Tasks.Porta.Gen.Migration do
   @doc false
   def run(args) do
     case OptionParser.parse(args) do
-        {opts, [name], _} ->
+        {_opts, [name], _} ->
           migration_args = args ++ ["--change", sql_template(path(name))]
           Mix.Task.run("ecto.gen.migration", migration_args)
           create_directory "sql/migrations"
-          create_file path(name)
+          create_file path(name), ""
         {_, _, _} ->
           Mix.raise "expected porta.gen.migration to receive the migration file name, " <>
                     "got: #{inspect Enum.join(args, " ")}"
         end
   end
 
-  def path(name), do: "sql/migrations/#{underscore(name)}"
+  def path(name), do: "sql/migrations/#{underscore(name)}.sql"
 
   def sql_template(path) do
     """
     "#{path}"
     |> File.read!
-    |> String.split("\\n-----")
+    |> String.split(~r/\\n-----.*/, trim: true)
     |> Enum.each(&execute/1)
     """
   end

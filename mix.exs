@@ -7,7 +7,8 @@ defmodule Porta.Mixfile do
      elixir: "~> 1.4",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     deps: deps()]
+     deps: deps(),
+	 aliases: aliases()]
   end
 
   # Configuration for the OTP application
@@ -30,4 +31,10 @@ defmodule Porta.Mixfile do
   defp deps do
     [{:ecto, "~> 2.1.3", only: :test}]
   end
+
+  defp aliases do
+    ["test": &warn/1]
+  end
+  
+  defp warn(_), do: raise "run tests in test/app instead"
 end
