@@ -2,11 +2,12 @@ defmodule App.UserChannelTest do
   use App.ChannelCase
 
   alias App.UserChannel
+  alias App.User
 
   setup do
     {:ok, _, socket} =
       socket("user_id", %{some: :assign})
-      |> subscribe_and_join(UserChannel, "user:lobby")
+      |> subscribe_and_join(UserChannel, "users")
 
     {:ok, socket: socket}
   end
@@ -16,9 +17,9 @@ defmodule App.UserChannelTest do
   #   assert_reply ref, :ok, %{"hello" => "there"}
   # end
 
-  test "shout broadcasts to user:lobby", %{socket: socket} do
-    Repo.insert_all "users", [%{name: "x"}]
-    assert_push "insert", %{"data" => %{"name" => "x"}}
+  test "notified of inserts", %{socket: socket} do
+    Repo.insert! %User{name: "x"}
+    assert_push "notif", %{"data" => %{"name" => "x"}, "event" => "insert"}
   end
 
   test "broadcasts are pushed to the client", %{socket: socket} do

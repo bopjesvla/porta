@@ -19,6 +19,23 @@ defmodule Porta.Channel do
         raise "Unhandled notification from #{channel}: #{inspect msg}"
       end
       
+      def tables(queries_and_names) do
+        tablelist = Enum.map queries_and_names, fn q_or_n ->
+          case q_or_n do
+            n when is_binary(n) ->
+              %{name: n, data: []}
+            %Ecto.Query{} = q ->
+              %{name: "users", data: Repo.all(q)}
+            table -> table
+          end
+        end
+        %{tables: tablelist}
+      end
+      
+      def table(arg) do
+        tables([arg])
+      end
+      
       defoverridable notify: 4
     end
   end
