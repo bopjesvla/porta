@@ -1,4 +1,6 @@
 defmodule Mix.Tasks.Porta.Migrate do
+  use Mix.Task
+
   def run(args) do
     Mix.Task.run "app.start", []
     Enum.each Mix.Ecto.parse_repo(args), fn repo ->
@@ -11,11 +13,11 @@ defmodule Mix.Tasks.Porta.Migrate do
           File.rename file, dest
         [] ->
           Mix.Task.run "ecto.gen.migration", ["sql_trigger", "--change", """
-          "sql/triggers/**/*.sql"
-          |> Path.wildcard
-          |> Enum.map(&File.read!/1)
-          |> Enum.flat_map(&String.split(&1, ~r/\n\s*-----.*/, trim: true))
-          |> Enum.each(&execute/1)
+              "sql/triggers/**/*.sql"
+              |> Path.wildcard
+              |> Enum.map(&File.read!/1)
+              |> Enum.flat_map(&String.split(&1, ~r/\\n\\s*-----.*/, trim: true))
+              |> Enum.each(&execute/1)
           """]
       end
     end

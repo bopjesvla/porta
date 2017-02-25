@@ -26,7 +26,7 @@ defmodule Mix.Tasks.Porta.Gen.Trigger do
   @doc false
   def run(args) do
     case OptionParser.parse(args) do
-        {_, [table, name], _} ->
+        {_, [name, table], _} ->
           fullname = "#{table}_#{underscore(name)}"
 
           path = "sql/triggers/#{fullname}.sql"

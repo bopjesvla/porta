@@ -26,15 +26,15 @@ defmodule Mix.Tasks.Porta.Gen.Migration do
   @doc false
   def run(args) do
     case OptionParser.parse(args) do
-        {_opts, [name], _} ->
-          migration_args = args ++ ["--change", sql_template(path(name))]
-          Mix.Task.run("ecto.gen.migration", migration_args)
-          create_directory "sql/migrations"
-          create_file path(name), ""
-        {_, _, _} ->
-          Mix.raise "expected porta.gen.migration to receive the migration file name, " <>
-                    "got: #{inspect Enum.join(args, " ")}"
-        end
+      {_opts, [name], _} ->
+        migration_args = args ++ ["--change", sql_template(path(name))]
+        Mix.Task.run("ecto.gen.migration", migration_args)
+        create_directory "sql/migrations"
+        create_file path(name), ""
+      {_, _, _} ->
+        Mix.raise "expected porta.gen.migration to receive the migration file name, " <>
+                  "got: #{inspect Enum.join(args, " ")}"
+    end
   end
 
   def path(name), do: "sql/migrations/#{underscore(name)}.sql"
