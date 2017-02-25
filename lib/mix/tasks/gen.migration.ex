@@ -43,7 +43,7 @@ defmodule Mix.Tasks.Porta.Gen.Migration do
     """
     "#{path}"
     |> File.read!
-    |> String.split(~r/\\n-----.*/, trim: true)
+    |> String.split(~r/\n\s*-----.*/, trim: true)
     |> Enum.each(&execute/1)
     """
   end

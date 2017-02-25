@@ -25,7 +25,7 @@ defmodule Porta.Repo do
         end
 
 	    case Ecto.Adapters.SQL.query!(__MODULE__, query, params, opts) do
-		  %{columns: columns, rows: rows} ->
+		  %{columns: columns, rows: rows} when is_list(rows) ->
 		    Enum.map rows, &(Enum.zip(columns, &1) |> Enum.into(%{}))
 		  res ->
 		    res
