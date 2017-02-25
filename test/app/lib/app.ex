@@ -5,6 +5,8 @@ defmodule App do
   # for more information on OTP Applications
   def start(_type, _args) do
     import Supervisor.Spec
+    
+    config = Application.get_env :app, App.Repo
 
     # Define workers and child supervisors to be supervised
     children = [
@@ -13,7 +15,7 @@ defmodule App do
       # Start the endpoint when the application starts
       supervisor(App.Endpoint, []),
       # Start your own worker by calling: App.Worker.start_link(arg1, arg2, arg3)
-      # worker(App.Worker, [arg1, arg2, arg3]),
+      worker(Postgrex.Notifications, [config ++ [name: :notif]])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

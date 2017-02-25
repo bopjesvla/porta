@@ -41,10 +41,10 @@ defmodule Mix.Tasks.Porta.Gen.Migration do
 
   def sql_template(path) do
     """
-    "#{path}"
-    |> File.read!
-    |> String.split(~r/\n\s*-----.*/, trim: true)
-    |> Enum.each(&execute/1)
+        "#{path}"
+        |> File.read!
+        |> String.split(~r/\\n\\s*-----.*/, trim: true)
+        |> Enum.each(&execute/1)
     """
   end
 end

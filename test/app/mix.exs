@@ -48,8 +48,8 @@ defmodule App.Mixfile do
   #
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
-    ["ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
+    ["ecto.setup": ["ecto.create", "porta.migrate", "run priv/repo/seeds.exs"],
      "ecto.reset": ["ecto.drop", "ecto.setup"],
-     "test": ["deps.get", "ecto.drop", "ecto.create", "test"]]
+     "test": ["deps.get", "ecto.reset", "test"]]
   end
 end

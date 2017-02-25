@@ -35,7 +35,7 @@ defmodule App.ChannelCase do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(App.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(App.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(App.Repo, :auto)
     end
 
     :ok
