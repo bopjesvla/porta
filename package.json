@@ -1,0 +1,21 @@
+{
+  "name": "porta.js",
+  "version": "0.0.1",
+  "description": "Extension to the Phoenix client.",
+  "license": "MPL-2.0",
+  "main": "./priv/static/porta.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/phoenixframework/phoenix.git"
+  },
+  "author": "Bob",
+  "devDependencies": {
+    "brunch": "~2.6.5",
+    "babel-brunch": "~6.0.0",
+    "uglify-js-brunch": "~2.0.1"
+  },
+  "files": ["README.md", "LICENSE.md", "package.json", "priv/static/porta.js"],
+  "scripts": {
+    "test": "./node_modules/.bin/mocha ./web/test/**/*.js --compilers js:babel-register"
+  }
+}
