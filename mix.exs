@@ -35,6 +35,21 @@ defmodule Porta.Mixfile do
   defp aliases do
     ["test": &warn/1]
   end
-  
+
   defp warn(_), do: raise "run tests in test/app instead"
+
+  defp description do
+    """
+    Utilities for Phoenix and Ecto
+    """
+  end
+
+  defp package do
+    [
+     name: :postgrex,
+     files: ["lib", "priv", "web", "mix.exs", "README*", "readme*", "LICENSE*", "license*"],
+     maintainers: ["Bob"],
+     licenses: ["MPL 2.0"],
+     links: %{"GitHub" => "https://github.com/bopjesvla/porta"}]
+  end
 end
