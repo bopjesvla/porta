@@ -9,7 +9,7 @@ defmodule Porta.TaskHelpers do
   #
   #       migration_args = args ++ ["--change", sql_template(path)]
   #       Mix.Task.run("ecto.gen.migration", migration_args)
-  #       create_directory "sql/migrations"
+  #       create_directory "priv/sql_migrations"
   #       create_file path, content_fn(name)
   #     {_, _, _} ->
   #       Mix.raise "expected to receive the migration file name, " <>

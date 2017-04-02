@@ -5,10 +5,10 @@ defmodule App.GeneratorTest do
   # test "gen.migration, single query" do
   #   :ok = Ecto.Adapters.SQL.Sandbox.checkout(App.Repo)
   #   File.rm_rf("priv/repo/migrations")
-  #   File.rm_rf!("sql/migrations")
+  #   File.rm_rf!("priv/sql_migrations")
   #   rnd = :rand.uniform 99999999999
   #   name = "mig"
-  #   path = "sql/migrations/#{name}.sql"
+  #   path = "priv/sql_migrations/#{name}.sql"
   #   assert File.exists?(path)
   #   File.write path, "create or replace function migration_name() returns integer as 'select 5 as rnd' language sql"
   #   Tasks.Ecto.Migrate.run []

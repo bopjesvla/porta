@@ -29,8 +29,8 @@ defmodule Mix.Tasks.Porta.Gen.Trigger do
         {_, [name, table], _} ->
           fullname = "#{table}_#{underscore(name)}"
 
-          path = "sql/triggers/#{fullname}.sql"
-          create_directory "sql/triggers"
+          path = "priv/triggers/#{fullname}.sql"
+          create_directory "priv/triggers"
 
           create_file path, """
             create or replace function #{fullname}() returns trigger as $$

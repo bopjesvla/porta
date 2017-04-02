@@ -29,7 +29,7 @@ defmodule Mix.Tasks.Porta.Gen.Migration do
       {_opts, [name], _} ->
         migration_args = args ++ ["--change", sql_template(path(name))]
         Mix.Task.run("ecto.gen.migration", migration_args)
-        create_directory "sql/migrations"
+        create_directory "priv/sql_migrations"
         create_file path(name), ""
       {_, _, _} ->
         Mix.raise "expected porta.gen.migration to receive the migration file name, " <>
@@ -37,7 +37,7 @@ defmodule Mix.Tasks.Porta.Gen.Migration do
     end
   end
 
-  def path(name), do: "sql/migrations/#{underscore(name)}.sql"
+  def path(name), do: "priv/sql_migrations/#{underscore(name)}.sql"
 
   def sql_template(path) do
     """

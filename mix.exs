@@ -8,7 +8,10 @@ defmodule Porta.Mixfile do
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      deps: deps(),
-	 aliases: aliases()]
+     aliases: aliases(),
+     package: package(),
+     description: description()
+   ]
   end
 
   # Configuration for the OTP application
@@ -29,7 +32,8 @@ defmodule Porta.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    [{:ecto, "~> 2.1.3", only: :test}]
+    [{:ecto, "~> 2.1.3", only: :test},
+     {:ex_doc, "~> 0.10", only: :dev}]
   end
 
   defp aliases do
@@ -46,8 +50,8 @@ defmodule Porta.Mixfile do
 
   defp package do
     [
-     name: :postgrex,
-     files: ["lib", "priv", "web", "mix.exs", "README*", "readme*", "LICENSE*", "license*"],
+     name: :porta,
+     files: ["lib", "priv", "web", "mix.exs", "README*", "LICENSE*"],
      maintainers: ["Bob"],
      licenses: ["MPL 2.0"],
      links: %{"GitHub" => "https://github.com/bopjesvla/porta"}]
