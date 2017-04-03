@@ -1,1 +1,1 @@
-select _param::int as i
+select _param_::int as i

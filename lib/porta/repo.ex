@@ -8,6 +8,7 @@ defmodule Porta.Repo do
     "fetch" => 140, "for" => 150
   }
   @keywords Map.keys(@priorities)
+  @joins Enum.filter(@keywords, &(@priorities[&1] == @priorities["join"]))
   @regex Regex.compile!("(^|\n)(?<keywords>" <> Enum.join(@keywords, "|") <> ")\\b", "i")
 
   defmacro __using__(_opts \\ []) do
@@ -26,8 +27,10 @@ defmodule Porta.Repo do
   end
 
   def do_run(repo, q, opts) do
-    {offset, params, query} = get_csql(q, 0)
+    {_offset, rev_params, query} = get_csql(q, 0)
     IO.inspect query
+
+    params = Enum.reverse(rev_params)
     
     case Ecto.Adapters.SQL.query(repo, query, params, opts) do
       {:ok, %{columns: columns, rows: rows}} when is_list(rows) and is_list(columns) ->
@@ -44,46 +47,24 @@ defmodule Porta.Repo do
       IO.inspect first
       raise "expected #{inspect string} to start with one of #{inspect @keywords}"
     end
-    pieces
+    Enum.chunk(pieces, 2)
   end
 
   def build_priority_list(pieces) do
     pieces
-    |> Enum.chunk(2)
     |> Enum.map(fn [keyword, clause] ->
       priority = Map.get @priorities, String.downcase(keyword), nil
       {priority, keyword <> clause}
     end)
   end
 
-  def remove_selects(list) do
-    p = @priorities["select"]
-    Enum.filter(list, fn
-      {^p, _} -> false
-      _ -> true
-    end)
+  def filter_except_first(list, fun) do
+    {before, x} = Enum.split_while(list, fun)
+    {first_match, rest} = Enum.split(x, 1)
+    before ++ first_match ++ Enum.filter(rest, fun)
   end
 
   def preprepare(q_list, params, init_offset) do
-    # len = length(params)
-    # [first | pieces] = Regex.split(~r/\$\d+/, q, include_captures: true)
-    # {params, {final_offset, query}} = pieces
-    # |> Enum.chunk(2)
-    # |> Enum.flat_map_reduce({init_offset, q}, fn ["$" <> int, text], {position, q} ->
-    #   i = String.to_integer(int)
-    #   if i > len do
-    #     raise "$#{i} is out of bounds in #{inspect params}"
-    #   end
-    #   p = Enum.fetch!(params, i - 1)
-    #   case p do
-    #     [{a, q} | _] when is_atom(a) ->
-    #       {new_offset, new_params, subq} = get_csql(p, position)
-    #       {new_params, {new_offset, "(#{get_csql()})" <> text}}
-    #     p ->
-    #       {p, {position, "$#{init_offset + i}" <> text}}
-    #   end
-    # end)
-
     Enum.reduce params, {init_offset, [], q_list}, fn {name, param}, {position, remaining_params, q_list} ->
       {new_offset, new_params, replacement} =
         case param do
@@ -93,26 +74,12 @@ defmodule Porta.Repo do
           p ->
             {position + 1, [p | remaining_params], "$#{position + 1}"}
         end
-      param_regex = ~r/\b_#{name}\b/
-      newq = Enum.map q_list, fn {priority, q} ->
-        {priority, Regex.replace(param_regex, q, replacement)}
+      param_regex = ~r/\b_#{name}_\b/
+      newq = Enum.map q_list, fn [priority, q] ->
+        [priority, Regex.replace(param_regex, q, replacement)]
       end
       {new_offset, new_params, newq}
     end
-    # increased_q = Regex.replace(~r/\$\d+/, q, fn "$" <> int ->
-    #   i = String.to_integer(int)
-    #   if i > len do
-    #     raise "$#{i} is out of bounds in #{inspect params}"
-    #   end
-    #   p = Enum.fetch!(params, i - 1)
-    #   case p do
-    #     [{a, q} | _] when is_atom(a) ->
-    #       {new_offset, new_params, subq} = get_csql(param, position)
-    #       "(#{get_csql()})"
-    #   end
-    #   "$#{String.to_integer(int) + by}"
-    # end)
-    # {count, increased_q}
   end
 
   def retrieve_query(s) when is_atom(s) do
@@ -121,10 +88,12 @@ defmodule Porta.Repo do
   end
 
   def get_csql(qs, offset) do
+    select_priority = @priorities["select"]
+
     {q_list, {new_offset, params}} =
       Enum.map_reduce(qs, {offset, []}, fn {q, params}, {offset, prev_params} ->
         {new_offset, new_params, newq} =
-          q |> retrieve_query |> split_query |> build_priority_list
+          q |> retrieve_query |> split_query
           |> preprepare(params, offset)
 
         {newq, {new_offset, new_params ++ prev_params}}
@@ -132,13 +101,28 @@ defmodule Porta.Repo do
 
     q_string = q_list
     |> Enum.concat
-    |> Enum.sort_by(&elem(&1, 0))
-    |> Enum.map_join("\n", fn {_priority, clause} -> clause end)
+    |> Enum.group_by(fn [keyword, _clause] ->
+      @priorities[keyword]
+    end)
+    |> Enum.sort_by(fn {priority, _group} -> priority end)
+    |> Enum.map_join("\n", fn {_priority, group} -> merge(group) end)
 
     {new_offset, params, q_string}
   end
 
-  def merge(old, new) do
-    new = String.split(new, "\n") |> Enum.filter()
+  def merge([["select", clause] | _]) do
+    "select" <> clause
+  end
+
+  def merge([["where", _] | _] = wheres) do
+    "where" <> Enum.map_join(wheres, "\nand ", fn [_, clause] -> clause end)
+  end
+
+  def merge([[join, _] | _] = clauses) when join in @joins do
+    Enum.map_join(clauses, "\n", fn [keyword, clause] -> keyword <> clause end)
+  end
+
+  def merge([[first, _] | _] = clauses) do
+    first <> Enum.map_join(clauses, ",\n", fn [_, clause] -> clause end)
   end
 end
