@@ -71,6 +71,8 @@ defmodule Porta.Repo do
           [{a, _} | _] when is_atom(a) ->
             {new_offset, new_params, subq} = get_csql(param, position)
             {new_offset, new_params ++ remaining_params,  "(#{subq})"}
+          {:raw, r} ->
+            {position, remaining_params, r}
           p ->
             {position + 1, [p | remaining_params], "$#{position + 1}"}
         end
@@ -115,7 +117,7 @@ defmodule Porta.Repo do
   end
 
   def merge([["where", _] | _] = wheres) do
-    "where" <> Enum.map_join(wheres, "\nand ", fn [_, clause] -> clause end)
+    "where (" <> Enum.map_join(wheres, ")\nand (", fn [_, clause] -> clause end) <> ")"
   end
 
   def merge([[join, _] | _] = clauses) when join in @joins do

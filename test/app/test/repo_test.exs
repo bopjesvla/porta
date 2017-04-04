@@ -29,4 +29,10 @@ defmodule App.RepoTest do
       scrambled: %{mod: 2, excluded: 6, similar_to: 5}
     ]
   end
+  test "run! complex query" do
+    assert [%{"i" => 3}] == Repo.run! [
+      scrambled: %{mod: 2, excluded: 4, similar_to: 5},
+      scrambled: %{mod: 2, excluded: 6, similar_to: 5}
+    ]
+  end
 end
