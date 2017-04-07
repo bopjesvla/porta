@@ -74,7 +74,23 @@ users_who_bought_user_9s_favorite_product_after_carnaval_in_the_year_1979 =
   }
 ```
 
-In this example, `priv/queries/favorite_product.sql` and `priv/queries/carnaval.sql` respectively contain queries returning a user's favorite product and the date of carnaval in a given year.
+*priv/queries/favorite_product.sql*
+
+```sql
+select p.name from products p
+join orders o on p.id = o.product_id
+join users u on u.id = o.user_id
+where u.id = _user_id_
+group by p.id
+order by count(o.*)
+limit 1
+```
+
+*priv/queries/carnaval.sql*
+
+```sql
+select (_year_::int || '-11-11)::date
+```
 
 ## Raw SQL
 
