@@ -14,17 +14,17 @@
       'event', lower(TG_OP),
       'data', data
     );
-    perform pg_notify('users', notification::text);
+    perform pg_notify('users2', notification::text);
     return null;
   end
   $$ language plpgsql;
 
   ----- keep this divider
 
-  drop trigger if exists users_notify_trigger on users;
+  drop trigger if exists users_notify_trigger on users2;
 
   ----- keep this divider
 
   create trigger users_notify_trigger
-  after insert or update or delete on users
+  after insert or update or delete on users2
   for each row execute procedure users_notify();

@@ -2,7 +2,7 @@ defmodule App.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  channel "users", App.UserChannel
+  channel "users2", App.UserChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket

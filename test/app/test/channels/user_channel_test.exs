@@ -7,7 +7,7 @@ defmodule App.UserChannelTest do
   # setup do
   #   {:ok, _, socket} =
   #     socket("user_id", %{some: :assign})
-  #     |> subscribe_and_join(UserChannel, "users")
+  #     |> subscribe_and_join(UserChannel, "users2")
 
   #   {:ok, socket: socket}
   # end

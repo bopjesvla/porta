@@ -25,7 +25,7 @@ defmodule Porta.Channel do
             n when is_binary(n) ->
               %{name: n, data: []}
             %Ecto.Query{} = q ->
-              %{name: "users", data: Repo.all(q)}
+              %{name: "users2", data: Repo.all(q)}
             table -> table
           end
         end

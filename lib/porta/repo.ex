@@ -1,6 +1,7 @@
 defmodule Porta.Repo do
   @priorities %{
     "with" => 0,
+    "create" => 5, "insert" => 5, "update" => 5, "delete" => 5,
     "select" => 10, "from" => 20,
     "join" => 30, "left join" => 30, "inner join" => 30, "right join" => 30,
     "where" => 70, "group by" => 80, "having" => 90, "window" => 100,
@@ -28,7 +29,6 @@ defmodule Porta.Repo do
 
   def do_run(repo, q, opts) do
     {_offset, rev_params, query} = get_csql(q, 0)
-    IO.inspect query
 
     params = Enum.reverse(rev_params)
     
@@ -85,8 +85,16 @@ defmodule Porta.Repo do
   end
 
   def retrieve_query(s) when is_atom(s) do
-    b = "priv/queries/#{s}.sql"
-    |> File.read!
+    f = "priv/queries/#{s}.sql"
+    if File.exists?(f) do
+      File.read! f
+    else
+      default_query s
+    end
+  end
+
+  def retrieve_query(b) when is_binary(b) do
+    b
   end
 
   def get_csql(qs, offset) do
@@ -126,5 +134,29 @@ defmodule Porta.Repo do
 
   def merge([[first, _] | _] = clauses) do
     first <> Enum.map_join(clauses, ",\n", fn [_, clause] -> clause end)
+  end
+
+  def default_query(:with), do: """
+  with _name_ as _query_
+  """
+
+  def default_query(:select), do: """
+  select _columns_ from _from_ _alias_
+  """
+
+  def default_query(:where), do: """
+  where _clause_
+  """
+
+  def default_query(:union_all) do
+    "select * from (_left_ union all _right_) _alias_"
+  end
+
+  def default_query(:union) do
+    "select * from (_left_ union all _right_) _alias_"
+  end
+
+  def default_query(:order) do
+    "order by _by_"
   end
 end
