@@ -105,7 +105,9 @@ select _column_ from users
 ```
 
 ```elixir
-Repo.run! select_user_column: {:raw, "name"}
+Repo.run! select_user_column: %{
+  column: {:raw, "name"}
+}
 ```
 
 ## Ad-Hoc Queries
