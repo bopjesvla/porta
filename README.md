@@ -137,9 +137,9 @@ Repo.run! [
 ]
 ```
 
-However, the SQL-file equivalent is usually more readable and flexible.
+That said, it usually makes more sense to put `select` subqueries in their own file under `priv/queries`.
 
-A thing that should see even rarer use is the ability to replace the atoms in the query list with strings:
+A feature that should see even rarer use is the ability to replace the atoms in the query list with strings:
 
 ```sql
 Repo.run! [{"select _i_ - 5", %{i: 6}}]
