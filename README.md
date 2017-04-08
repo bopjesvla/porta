@@ -53,11 +53,11 @@ With the positional arguments `["cheerleader", "salmon", ~N"2017-03-29 12:30:00"
 
 The merger above is less intelligent than it seems.
 
-It first breaks up each query wherever a line starts with a clause keyword such as `left join`, `where` and `order by`. Because of this, the **newlines in the examples above are required**.  After that, it replaces all named parameters with positional parameters (or subqueries, or raw SQL). Then it groups and sorts all clauses on their type, maintaining the order of clauses of the same type. Finally, clauses of the same type are merged together if necessary. 
+It first splits each query wherever a line starts with a clause keyword such as `left join`, `where` and `order by`. Because of this, the **newlines in the examples above are required**.  After that, it replaces all named parameters with positional parameters (or subqueries, or raw SQL). Then it groups and sorts all clauses on their type, maintaining the order of clauses of the same type. Finally, clauses of the same type are merged together if necessary. 
 
 While this approach supports all SQL dialects and allows for more expressive queries than most typical ORMs, there are a few problems:
 
-- Each table has to be aliased the same way across all merged queries. I think this can always be acheived through subquerying, but I may be wrong.
+- Each table has to be aliased the same way across all merged queries. I think this can always be achieved through subquerying, but I may be wrong.
 - Some clause types do not have a simple, natural merge strategy. In the case of `select` clauses, this means we currently discard everything but the first one.
 
 ## Subqueries
