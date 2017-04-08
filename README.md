@@ -27,8 +27,6 @@ where p.name = _product_
 defmodule App.Repo do
   use Ecto.Repo
   use Porta.Repo
-  
-  def 
 end
 
 banned_cheerleaders_who_bought_salmon_after_article_50_was_invoked =
@@ -137,7 +135,7 @@ Repo.run! [
 ]
 ```
 
-That said, it usually makes more sense to put `select` subqueries in their own file under `priv/queries`.
+While the `union` and `union_all` default queries are very useful, it usually makes more sense to put `select` subqueries in their own file under `priv/queries`.
 
 A feature that should see even rarer use is the ability to replace the atoms in the query list with strings:
 
